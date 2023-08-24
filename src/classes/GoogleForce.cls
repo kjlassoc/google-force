@@ -32,6 +32,11 @@ public class GoogleForce {
             this.serviceAcctToken = new Google_SA_Token__c(
                 Name = serviceAcct.Id,
                 Value__c = null,
+                Value2__c = null,
+                Value3__c = null,
+                Value4__c = null,
+                Value5__c = null,
+                Value6__c = null,
                 Timestamp__c = null);
         }
         updateToken = false;
@@ -78,7 +83,7 @@ public class GoogleForce {
         getAccessToken();
 
         HttpRequest req = new HttpRequest();
-        req.setHeader('Authorization', 'Bearer ' + serviceAcctToken.Value__c);
+        req.setHeader('Authorization', 'Bearer ' + serviceAcctToken.Value__c + serviceAcctToken.Value2__c + serviceAcctToken.Value3__c + serviceAcctToken.Value4__c + serviceAcctToken.Value5__c + serviceAcctToken.Value6__c);
         req.setEndpoint(params.get('endpoint'));
         req.setMethod(params.get('method'));
         req.setTimeout(15 * 1000);
@@ -156,7 +161,44 @@ public class GoogleForce {
         Map<String, Object> respParams = (Map<String, Object>)
             JSON.deserializeUntyped(res.getBody());
 
-        serviceAcctToken.Value__c = (String) respParams.get('access_token');
+        String accessToken = (String) respParams.get('access_token');
+        Integer substringLength = (accessToken.length() > 255 ? 255 : accessToken.length());
+        serviceAcctToken.Value__c = accessToken.substring(0, substringLength);
+        if (accessToken.length() > 255) {
+            if (accessToken.length() > 510) {
+                serviceAcctToken.value2__c = accessToken.substring(255, 510);
+            } else {
+                serviceAcctToken.value2__c = accessToken.substring(255);
+            }
+        }
+        if (accessToken.length() > 510) {
+            if (accessToken.length() > 765) {
+                serviceAcctToken.value3__c = accessToken.substring(510, 765);
+            } else {
+                serviceAcctToken.value3__c = accessToken.substring(510);
+            }
+        }
+        if (accessToken.length() > 765) {
+            if (accessToken.length() > 1020) {
+                serviceAcctToken.value4__c = accessToken.substring(765, 1020);
+            } else {
+                serviceAcctToken.value4__c = accessToken.substring(765);
+            }
+        }
+        if (accessToken.length() > 1020) {
+            if (accessToken.length() > 1275) {
+                serviceAcctToken.value5__c = accessToken.substring(1020, 1275);
+            } else {
+                serviceAcctToken.value5__c = accessToken.substring(1020);
+            }
+        }
+        if (accessToken.length() > 1275) {
+            if (accessToken.length() > 1530) {
+                serviceAcctToken.value6__c = accessToken.substring(1275, 1530);
+            } else {
+                serviceAcctToken.value6__c = accessToken.substring(1275);
+            }
+        }
         serviceAcctToken.Timestamp__c = Datetime.now();
 
         return serviceAcctToken;
