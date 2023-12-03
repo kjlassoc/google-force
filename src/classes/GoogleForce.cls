@@ -9,14 +9,14 @@ public class GoogleForce {
     public GoogleForce(String serviceAcctName) {
 
         List<Google_Service_Account__mdt> saQueryResult = [
-            select Id, Client_Email__c, Private_Key__c, Scope__c
+            select Id, Client_Email__c, Private_Key__c, Scope__c, Services_Spreadsheet_Id__c, Master_Spreadsheet_Id_c__c
             from Google_Service_Account__mdt
             where MasterLabel = :serviceAcctName
             limit 1];
 
         if (saQueryResult.size() == 0) {
             saQueryResult = [
-                select Id, Client_Email__c, Private_Key__c, Scope__c
+                select Id, Client_Email__c, Private_Key__c, Scope__c, Services_Spreadsheet_Id__c, Master_Spreadsheet_Id_c__c
                 from Google_Service_Account__mdt
                 where DeveloperName = :serviceAcctName
             limit 1];
@@ -141,6 +141,14 @@ public class GoogleForce {
             return true;
         }
         return false;
+    }
+
+    public String getServicesSpreadsheetId() {
+        if (serviceAcct != null) {
+            return serviceAcct.Services_Spreadsheet_Id__c;
+        }
+
+        return null;
     }
 
     private Google_SA_Token__c requestAccessToken() {

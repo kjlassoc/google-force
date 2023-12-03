@@ -30,6 +30,14 @@ public class GoogleSheets {
             return new BatchGet(this, spreadsheetId);
         }
 
+        public BatchSetDataValidation batchSetDataValidation(String spreadsheetId, Integer sheetId, Integer startRowIndex, Integer endRowIndex, Integer startColumnIndex, Integer endColumnIndex, List<String> values) {
+            return new BatchSetDataValidation(this, spreadsheetId, sheetId, startRowIndex, endRowIndex, startColumnIndex, endColumnIndex, values);
+        }
+
+        public BatchUpdateSheetProperty batchUpdateSheetProperty(String spreadsheetId, Integer sheetId, String title) {
+            return new BatchUpdateSheetProperty(this, spreadsheetId, sheetId, title);
+        }
+
         public BatchUpdate batchUpdate(String spreadsheetId, BatchUpdateRequest content) {
             return new BatchUpdate(this, spreadsheetId, content);
         }
@@ -40,6 +48,14 @@ public class GoogleSheets {
 
         public UpdateRange updateRange(String spreadsheetId, String range, ValueRange valueRange) {
             return new UpdateRange(this, spreadsheetId, range, valueRange);
+        }
+
+        public Get get(String spreadsheetId) {
+            return new Get(this, spreadsheetId);
+        }
+
+        public CopyTo copyTo(String sourceSpreadsheetId, String destinationSpreadsheetId, Integer sheetId) {
+            return new CopyTo(this, sourceSpreadsheetId, destinationSpreadsheetId, sheetId);
         }
     }
 
@@ -114,6 +130,135 @@ public class GoogleSheets {
 
         public BatchGetValuesResponse setValueRanges(List<ValueRange> valueRanges) {
             this.valueRanges = valueRanges;
+            return this;
+        }
+    }
+
+    public class BatchSetDataValidation {
+        private Values gValues;
+        private String spreadsheetId;
+        private Integer sheetId;
+        private Integer startRowIndex;
+        private Integer endRowIndex;
+        private Integer startColumnIndex;
+        private Integer endColumnIndex;
+        private List<String> dataValues;
+        private BatchSetDataRequest batchSetDataRequest;
+
+        public BatchSetDataValidation(Values gValues, String spreadsheetId, Integer sheetId, Integer startRowIndex, Integer endRowIndex, Integer startColumnIndex, Integer endColumnIndex, List<String> dataValues) {
+            this.gValues = gValues;
+            this.spreadsheetId = spreadsheetId;
+            this.sheetId = sheetId;
+            this.startRowIndex = startRowIndex;
+            this.endRowIndex = endRowIndex;
+            this.startColumnIndex = startColumnIndex;
+            this.endColumnIndex = endColumnIndex;
+            this.dataValues = dataValues;
+
+            GoogleSheets.GridRange gridRange = new GoogleSheets.GridRange();
+            gridRange.setSheetId(sheetId);
+            gridRange.setStartRowIndex(startRowIndex);
+            gridRange.setEndRowIndex(endRowIndex);
+            gridRange.setStartColumnIndex(startColumnIndex);
+            gridRange.setEndColumnIndex(endColumnIndex);
+
+            List<GoogleSheets.ConditionValue> conditionValues = new List<GoogleSheets.ConditionValue>();
+            for (String dataValue : dataValues) {
+                ConditionValue conditionValue = new ConditionValue();
+                conditionValue.setUserEnteredValue(dataValue);
+                conditionValues.add(conditionValue);
+            }
+ 
+            GoogleSheets.BooleanCondition booleanCondition = new BooleanCondition();
+            booleanCondition.setType('ONE_OF_LIST');
+            booleanCondition.setValues(conditionValues);
+
+            GoogleSheets.DataValidationRule dataValidationRule = new GoogleSheets.DataValidationRule();
+            dataValidationRule.setCondition(booleanCondition);
+            dataValidationRule.setShowCustomUi(true);
+            dataValidationRule.setStrict(true);
+
+            GoogleSheets.SetDataValidationRequest setDataValidationRequest = new SetDataValidationRequest();
+            setDataValidationRequest.setRange(gridRange);
+            setDataValidationRequest.setRule(dataValidationRule);
+
+            GoogleSheets.SetDataRequest setDataRequest = new GoogleSheets.SetDataRequest();
+            setDataRequest.setSetDataValidationRequest(setDataValidationRequest);
+
+            GoogleSheets.BatchSetDataRequest batchSetDataRequest = new GoogleSheets.BatchSetDataRequest();
+            List<GoogleSheets.SetDataRequest> requests = new List<GoogleSheets.SetDataRequest>();
+            requests.add(setDataRequest);
+            batchSetDataRequest.setRequests(requests);
+            this.batchSetDataRequest = batchSetDataRequest;
+        }
+
+        public void execute() {
+            String endpoint = GoogleSheets.rootUrl + '/' + spreadsheetId + ':batchUpdate';
+            String jsonBody = JSON.serialize(batchSetDataRequest, true);
+System.debug('----->' + JSON.serializePretty(batchSetDataRequest));
+            GoogleForce gForce = gValues.gSpreadsheet.gSheet.gForce;
+            HttpResponse resp = gForce.sendRequest(new Map<String, String>{
+                'method'   => 'POST',
+                'endpoint' => endpoint,
+                'body' => jsonBody
+            });
+
+            return;
+        }
+    }
+
+    public class BatchUpdateSheetProperty {
+        private Values gValues;
+        private String spreadsheetId;
+        private Integer sheetId;
+        private String title;
+        private BatchUpdateSheetRequest batchUpdateSheetRequest;
+
+        public BatchUpdateSheetProperty(Values gValues, String spreadsheetId, Integer sheetId, String title) {
+            this.gValues = gValues;
+            this.spreadsheetId = spreadsheetId;
+            this.sheetId = sheetId;
+            this.title = title;
+
+            GoogleSheets.SheetProperties sheetProperties = new GoogleSheets.SheetProperties();
+            sheetProperties.setSheetId(sheetId);
+            sheetProperties.setTitle(title);
+            GoogleSheets.UpdateSheetPropertiesRequest updateSheetPropertiesRequest = new GoogleSheets.UpdateSheetPropertiesRequest();
+            updateSheetPropertiesRequest.setProperties(sheetProperties);
+            updateSheetPropertiesRequest.setFields('title');
+            GoogleSheets.UpdateSheetRequest updateSheetRequest = new GoogleSheets.UpdateSheetRequest();
+            updateSheetRequest.setUpdateSheetPropertiesRequest(updateSheetPropertiesRequest);
+            GoogleSheets.BatchUpdateSheetRequest batchUpdateSheetRequest = new GoogleSheets.BatchUpdateSheetRequest();
+            List<GoogleSheets.UpdateSheetRequest> requests = new List<GoogleSheets.UpdateSheetRequest>();
+            requests.add(updateSheetRequest);
+            batchUpdateSheetRequest.setRequests(requests);
+            this.batchUpdateSheetRequest = batchUpdateSheetRequest;
+        }
+
+        public void execute() {
+            String endpoint = GoogleSheets.rootUrl + '/' + spreadsheetId + ':batchUpdate';
+            String jsonBody = JSON.serialize(batchUpdateSheetRequest, true);
+
+            GoogleForce gForce = gValues.gSpreadsheet.gSheet.gForce;
+            HttpResponse resp = gForce.sendRequest(new Map<String, String>{
+                'method'   => 'POST',
+                'endpoint' => endpoint,
+                'body' => jsonBody
+            });
+
+            return;
+        }
+    }
+
+    public class BatchUpdateSheetRequest {
+        private List<UpdateSheetRequest> requests;
+
+        public List<UpdateSheetRequest> getRequests() {
+            return requests;
+        }
+
+        public BatchUpdateSheetRequest setRequests(List<UpdateSheetRequest> requests) {
+            this.requests = requests;
             return this;
         }
     }
@@ -240,6 +385,110 @@ public class GoogleSheets {
         public BatchUpdateValuesResponse setTotalUpdatedSheets(Integer totalUpdatedSheets) {
             this.totalUpdatedSheets = totalUpdatedSheets;
             return this;
+        }
+    }
+
+    public class Get {
+        private Values gValues;
+        private String spreadsheetId;
+
+        public Get(Values gValues, String spreadsheetId) {
+            this.gValues = gValues;
+            this.spreadsheetId = spreadsheetId;
+        }
+
+        public List<Sheet> execute() {
+            String endpoint = GoogleSheets.rootUrl + '/' + spreadsheetId;
+
+            GoogleForce gForce = gValues.gSpreadsheet.gSheet.gForce;
+            HttpResponse resp = gForce.sendRequest(new Map<String, String>{
+                'method'   => 'GET',
+                'endpoint' => endpoint
+            });
+
+            String getResponse = gForce.handleResponse(resp);
+            Map<String, Object> m = (Map<String, Object>) JSON.deserializeUntyped(getResponse);
+            List<Sheet> sheetsResp = new List<Sheet>();
+
+            for (Object s : (List<Object>) m.get('sheets')) {
+            }
+
+            return sheetsResp;
+        }
+    }
+
+    public class CopyTo {
+
+        private Values gValues;
+        private String sourceSpreadsheetId;
+        private String destinationSpreadsheetId;
+        private Integer sheetId;
+
+        public CopyTo(Values gValues, String sourceSpreadsheetId, String destinationSpreadsheetId, Integer sheetId) {
+            this.gValues = gValues;
+            this.sourceSpreadsheetId = sourceSpreadsheetId;
+            this.destinationSpreadsheetId = destinationSpreadsheetId;
+            this.sheetId = sheetId;
+        }
+
+        public Sheet execute() {
+            String endpoint = GoogleSheets.rootUrl + '/' + sourceSpreadsheetId + '/sheets/' + sheetId + ':copyTo';
+            CopyToRequest copyToRequest = new CopyToRequest(destinationSpreadsheetId);
+            String jsonBody = JSON.serialize(copyToRequest, true);
+
+            GoogleForce gForce = gValues.gSpreadsheet.gSheet.gForce;
+            HttpResponse resp = gForce.sendRequest(new Map<String, String>{
+                'method'   => 'POST',
+                'endpoint' => endpoint,
+                'body' => jsonBody
+            });
+
+            String copyToResponse = gForce.handleResponse(resp);
+            Map<String, Object> m = (Map<String, Object>) JSON.deserializeUntyped(copyToResponse);
+            Integer destinationSheetId = (Integer) m.get('sheetId');
+            String destinationTitle = (String) m.get('title');
+
+            return new Sheet(destinationSheetId, destinationTitle);
+        }
+    }
+
+    public class CopyToRequest {
+        String destinationSpreadsheetId;
+
+        public String getDestinationSpreadsheetId() {
+            return destinationSpreadsheetId;
+        }
+
+        public CopyToRequest(String destinationSpreadsheetId) {
+            this.destinationSpreadsheetId = destinationSpreadsheetId;
+        }
+    }
+
+    public class Sheet {
+        private Integer sheetId;
+        private String title;
+
+        public Integer getSheetId() {
+            return sheetId;
+        }
+
+        public Sheet setSheetId(Integer sheetId) {
+            this.sheetId = sheetId;
+            return this;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public Sheet setTitle(String title) {
+            this.title = title;
+            return this;
+        }
+
+        public Sheet(Integer sheetId, String title) {
+            this.sheetId = sheetId;
+            this.title = title;
         }
     }
 
@@ -408,6 +657,163 @@ public class GoogleSheets {
         }
     }
 
+    public class UpdateSheetRequest {
+        private UpdateSheetPropertiesRequest updateSheetProperties;
+
+        public UpdateSheetPropertiesRequest getUpdateSheetPropertiesRequest() {
+            return updateSheetProperties;
+        }
+
+        public UpdateSheetRequest setUpdateSheetPropertiesRequest(UpdateSheetPropertiesRequest updateSheetProperties) {
+            this.updateSheetProperties = updateSheetProperties;
+            return this;
+        }
+    }
+
+    public class UpdateSheetPropertiesRequest {
+        private SheetProperties properties;
+        private String fields;
+
+        public SheetProperties getProperties() {
+            return properties;
+        }
+
+        public UpdateSheetPropertiesRequest setProperties(SheetProperties properties) {
+            this.properties = properties;
+            return this;
+        }
+
+        public String getFields() {
+            return fields;
+        }
+
+        public UpdateSheetPropertiesRequest setFields(String fields) {
+            this.fields = fields;
+            return this;
+        }
+    }
+
+    public class SheetProperties {
+        private Integer sheetId;
+        private String title;
+
+        public Integer getSheetId() {
+            return sheetId;
+        }
+
+        public SheetProperties setSheetId(Integer sheetId) {
+            this.sheetId = sheetId;
+            return this;
+        }
+
+        public String getTitle() {
+            return title;
+        }
+
+        public SheetProperties setTitle(String title) {
+            this.title = title;
+            return this;
+        }
+    }
+
+    public class GridRange {
+        private Integer sheetId;
+        private Integer startRowIndex;
+        private Integer endRowIndex;
+        private Integer startColumnIndex;
+        private Integer endColumnIndex;
+
+        public Integer getSheetId() {
+            return sheetId;
+        }
+
+        public GridRange setSheetId(Integer sheetId) {
+            this.sheetId = sheetId;
+            return this;
+        }
+
+        public Integer getStartRowIndex() {
+            return startRowIndex;
+        }
+
+        public GridRange setStartRowIndex(Integer startRowIndex) {
+            this.startRowIndex = startRowIndex;
+            return this;
+        }
+
+        public Integer getEndRowIndex() {
+            return endRowIndex;
+        }
+
+        public GridRange setEndRowIndex(Integer endRowIndex) {
+            this.endRowIndex = endRowIndex;
+            return this;
+        }
+
+        public Integer getStartColumnIndex() {
+            return startColumnIndex;
+        }
+
+        public GridRange setStartColumnIndex(Integer startColumnIndex) {
+            this.startColumnIndex = startColumnIndex;
+            return this;
+        }
+
+        public Integer getEndColumnIndex() {
+            return endColumnIndex;
+        }
+
+        public GridRange setEndColumnIndex(Integer endColumnIndex) {
+            this.endColumnIndex = endColumnIndex;
+            return this;
+        }
+    }
+
+    public class ConditionValue {
+        private String userEnteredValue;
+
+        public ConditionValue setUserEnteredValue(String userEnteredValue) {
+            this.userEnteredValue = userEnteredValue;
+            return this;
+        }
+    }
+
+    public class BooleanCondition {
+        private String type;
+        private List<ConditionValue> values;
+
+        public BooleanCondition setType(String type) {
+            this.type = type;
+            return this;
+        }
+
+        public BooleanCondition setValues(List<ConditionValue> values) {
+            this.values = values;
+            return this;
+        }
+    }
+
+    public class DataValidationRule {
+        private BooleanCondition condition;
+        private Boolean showCustomUi;
+        private Boolean strict;
+
+        public DataValidationRule setCondition(BooleanCondition condition) {
+            this.condition = condition;
+            return this;
+        }
+
+        public DataValidationRule setShowCustomUi(Boolean showCustomUi) {
+            this.showCustomUi = showCustomUi;
+            return this;
+        }
+
+        public DataValidationRule setStrict(Boolean strict) {
+            this.strict = strict;
+            return this;
+        }
+    }
+
     public class ValueRange {
         private String range;
         private String majorDimension;
@@ -437,6 +843,55 @@ public class GoogleSheets {
 
         public ValueRange setValues(List<List<String>> values) {
             this.values = values;
+            return this;
+        }
+    }
+
+    public class SetDataRequest {
+        private SetDataValidationRequest setDataValidation;
+
+        public SetDataValidationRequest getSetDataValidationRequest() {
+            return setDataValidation;
+        }
+
+        public SetDataRequest setSetDataValidationRequest(SetDataValidationRequest setDataValidation) {
+            this.setDataValidation = setDataValidation;
+            return this;
+        }
+    }
+
+    public class SetDataValidationRequest {
+        private GridRange range;
+        private DataValidationRule rule;
+
+        public GridRange getRange() {
+            return range;
+        }
+
+        public SetDataValidationRequest setRange(GridRange range) {
+            this.range = range;
+            return this;
+        }
+
+        public DataValidationRule getRule() {
+            return rule;
+        }
+
+        public SetDataValidationRequest setRule(DataValidationRule rule) {
+            this.rule = rule;
+            return this;
+        }
+    }
+
+    public class BatchSetDataRequest {
+        private List<SetDataRequest> requests;
+
+        public List<SetDataRequest> getRequests() {
+            return requests;
+        }
+
+        public BatchSetDataRequest setRequests(List<SetDataRequest> requests) {
+            this.requests = requests;
             return this;
         }
     }
