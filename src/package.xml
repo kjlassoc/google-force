@@ -3,6 +3,7 @@
 	<types>
 		<members>AccountTriggerController</members>
 		<members>GoogleSheetsBatch</members>
+		<members>ServiceTriggerController</members>
 		<members>GoogleForce</members>
 		<members>GoogleMockResponse</members>
 		<members>GoogleSheets</members>
