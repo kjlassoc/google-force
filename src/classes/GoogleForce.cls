@@ -169,42 +169,46 @@ public class GoogleForce {
         Map<String, Object> respParams = (Map<String, Object>)
             JSON.deserializeUntyped(res.getBody());
 
-        String accessToken = (String) respParams.get('access_token');
-        Integer substringLength = (accessToken.length() > 255 ? 255 : accessToken.length());
-        serviceAcctToken.Value__c = accessToken.substring(0, substringLength);
-        if (accessToken.length() > 255) {
-            if (accessToken.length() > 510) {
-                serviceAcctToken.value2__c = accessToken.substring(255, 510);
-            } else {
-                serviceAcctToken.value2__c = accessToken.substring(255);
-            }
-        }
-        if (accessToken.length() > 510) {
-            if (accessToken.length() > 765) {
-                serviceAcctToken.value3__c = accessToken.substring(510, 765);
-            } else {
-                serviceAcctToken.value3__c = accessToken.substring(510);
-            }
-        }
-        if (accessToken.length() > 765) {
-            if (accessToken.length() > 1020) {
-                serviceAcctToken.value4__c = accessToken.substring(765, 1020);
-            } else {
-                serviceAcctToken.value4__c = accessToken.substring(765);
-            }
-        }
-        if (accessToken.length() > 1020) {
-            if (accessToken.length() > 1275) {
-                serviceAcctToken.value5__c = accessToken.substring(1020, 1275);
-            } else {
-                serviceAcctToken.value5__c = accessToken.substring(1020);
-            }
-        }
-        if (accessToken.length() > 1275) {
-            if (accessToken.length() > 1530) {
-                serviceAcctToken.value6__c = accessToken.substring(1275, 1530);
-            } else {
-                serviceAcctToken.value6__c = accessToken.substring(1275);
+        if (respParams != null) {
+            String accessToken = (String) respParams.get('access_token');
+            if (accessToken != null) {
+                Integer substringLength = (accessToken.length() > 255 ? 255 : accessToken.length());
+                serviceAcctToken.Value__c = accessToken.substring(0, substringLength);
+                if (accessToken.length() > 255) {
+                    if (accessToken.length() > 510) {
+                        serviceAcctToken.value2__c = accessToken.substring(255, 510);
+                    } else {
+                        serviceAcctToken.value2__c = accessToken.substring(255);
+                    }
+                }
+                if (accessToken.length() > 510) {
+                    if (accessToken.length() > 765) {
+                        serviceAcctToken.value3__c = accessToken.substring(510, 765);
+                    } else {
+                        serviceAcctToken.value3__c = accessToken.substring(510);
+                    }
+                }
+                if (accessToken.length() > 765) {
+                    if (accessToken.length() > 1020) {
+                        serviceAcctToken.value4__c = accessToken.substring(765, 1020);
+                    } else {
+                        serviceAcctToken.value4__c = accessToken.substring(765);
+                    }
+                }
+                if (accessToken.length() > 1020) {
+                    if (accessToken.length() > 1275) {
+                        serviceAcctToken.value5__c = accessToken.substring(1020, 1275);
+                    } else {
+                        serviceAcctToken.value5__c = accessToken.substring(1020);
+                    }
+                }
+                if (accessToken.length() > 1275) {
+                    if (accessToken.length() > 1530) {
+                        serviceAcctToken.value6__c = accessToken.substring(1275, 1530);
+                    } else {
+                        serviceAcctToken.value6__c = accessToken.substring(1275);
+                    }
+                }
             }
         }
         serviceAcctToken.Timestamp__c = Datetime.now();
