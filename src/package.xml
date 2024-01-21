@@ -8,8 +8,6 @@
 		<members>GoogleMockResponse</members>
 		<members>GoogleSheets</members>
 		<members>GoogleSheets_Test</members>
-		<members>GoogleDrive</members>
-		<members>GoogleDrive_Test</members>
 		<members>AccountTriggerTest</members>
 		<members>GoogleSheetsBatchTest</members>
 		<members>ServiceTriggerTest</members>
