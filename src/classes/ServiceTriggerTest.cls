@@ -7,7 +7,7 @@ public with sharing class ServiceTriggerTest {
         Account myAccount = MyAccounts.get(0);
         myAccount.Services_Spreadsheet_Sheet_Id__c = '12345';
         update myAccount;
-        Service_c__c myService = new Service_c__c(Name='myService');
+        Service_c__c myService = new Service_c__c();
         myService.Account__c = myAccount.Id;
         myService.Expired__c = false;
         myService.Invoice_sent__c = false;
