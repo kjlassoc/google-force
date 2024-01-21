@@ -10,6 +10,7 @@
 		<members>GoogleSheets_Test</members>
 		<members>GoogleDrive</members>
 		<members>GoogleDrive_Test</members>
+		<members>AccountTriggerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
