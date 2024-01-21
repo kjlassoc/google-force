@@ -167,6 +167,10 @@ private class GoogleSheets_Test {
             .setValueInputOption('USER_ENTERED')
             .execute();
 
+        GoogleSheets.ValueRange valsGetRangeResp = sheets.spreadsheets().values().getRange(
+            '1OG3iEFN-prmiIS7Fqhd078WUyid_9Na97lroinaHu3I', 'A1:B2')
+            .execute();
+
         Test.stopTest();
 
         System.assertEquals(updateValuesResponseMock.getSpreadsheetId(),
