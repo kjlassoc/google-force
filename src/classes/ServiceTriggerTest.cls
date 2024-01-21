@@ -16,7 +16,6 @@ public with sharing class ServiceTriggerTest {
         myService.Note__c = 'Note';
         myService.Paid__c = true;
         myService.Product__c = myProducts.get(0).Id;
-        myService.Purchase_Price__c = 1.00;
         myService.Renewal__c = false;
         myService.Sale_date__c = Date.today().addDays(-301);
         myService.Subscriber_name__c = myContacts.get(0).Id;
