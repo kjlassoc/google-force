@@ -8,9 +8,9 @@ public with sharing class AccountTriggerTest {
         myAccount.Website = 'https://www.myaccount.com';
         myAccount.accountNumber = '123';
         myAccount.BillingStreet = 'street abc1';
-        myAccount.BillingCity = 'city1';
-        myAccount.BillingState = 'state1';
-        myAccount.BillingCountry = 'India';
+        myAccount.BillingCity = 'Chicago';
+        myAccount.BillingState = 'Illinois';
+        myAccount.BillingCountry = 'United States';
         myAccount.BillingpostalCode = '302039';
         myAccount.Services_Spreadsheet_Sheet_Id__c = '12345';
         myAccount.Trainer_1__c = myContacts.get(0).Id;
