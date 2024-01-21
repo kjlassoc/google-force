@@ -10,7 +10,7 @@ public with sharing class AccountTriggerTest {
         myAccount.BillingStreet = 'street abc1';
         myAccount.BillingCity = 'city1';
         myAccount.BillingState = 'state1';
-        myAccount.BillingCountry = 'Ind';
+        myAccount.BillingCountry = 'India';
         myAccount.BillingpostalCode = '302039';
         myAccount.Services_Spreadsheet_Sheet_Id__c = '12345';
         myAccount.Trainer_1__c = myContacts.get(0).Id;
