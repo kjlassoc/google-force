@@ -20,7 +20,5 @@ public with sharing class ServiceTriggerTest {
         myService.Sale_date__c = Date.today().addDays(-301);
         myService.Subscriber_name__c = myContacts.get(0).Id;
         insert myService;
-        myService.Name = 'myService';
-        update myService;
     }
 }
