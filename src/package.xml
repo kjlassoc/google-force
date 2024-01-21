@@ -12,6 +12,7 @@
 		<members>GoogleDrive_Test</members>
 		<members>AccountTriggerTest</members>
 		<members>GoogleSheetsBatchTest</members>
+		<members>ServiceTriggerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
