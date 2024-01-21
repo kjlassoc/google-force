@@ -4,8 +4,11 @@ public with sharing class ServiceTriggerTest {
         List<Account> myAccounts = [select Id from Account limit 100];
         List<Product2> myProducts = [select Id from Product2 limit 100];
         List<Contact> myContacts = [select Id from Contact limit 100];
+        Account myAccount = MyAccounts.get(0);
+        myAccount.Services_Spreadsheet_Sheet_Id__c = '12345';
+        update myAccount;
         Service_c__c myService = new Service_c__c(Name='myService');
-        myService.Account__c = myAccounts.get(0).Id;
+        myService.Account__c = myAccount.Id;
         myService.Expired__c = false;
         myService.Invoice_sent__c = false;
         myService.License_end_date__c = Date.today().addDays(300);
