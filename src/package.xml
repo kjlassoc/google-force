@@ -6,6 +6,8 @@
 		<members>ServiceTriggerController</members>
 		<members>GoogleForce</members>
 		<members>GoogleMockResponse</members>
+		<members>GoogleDrive</members>
+		<members>GoogleDrive_Test</members>
 		<members>GoogleSheets</members>
 		<members>GoogleSheets_Test</members>
 		<members>AccountTriggerTest</members>
