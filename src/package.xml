@@ -13,6 +13,7 @@
 		<members>AccountTriggerTest</members>
 		<members>GoogleSheetsBatchTest</members>
 		<members>ServiceTriggerTest</members>
+		<members>ServiceTriggerControllerTest</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
