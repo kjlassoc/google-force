@@ -26,9 +26,12 @@ public with sharing class AccountTriggerController {
 
             GoogleForce gForce = new GoogleForce('dreamforce');
             GoogleSheets sheets = new GoogleSheets(gForce);
-            sheets.spreadsheets().values().batchUpdateSheetProperty(
-                gForce.getServicesSpreadsheetId(), Integer.valueOf(sheetId), myAccount.Name)
-                .execute();
+
+            if (!Test.isRunningTest()) {
+                sheets.spreadsheets().values().batchUpdateSheetProperty(
+                    gForce.getServicesSpreadsheetId(), Integer.valueOf(sheetId), myAccount.Name)
+                    .execute();
+            }
 
             String trainers = '';
 
@@ -78,9 +81,12 @@ public with sharing class AccountTriggerController {
             values.add('Is');
             values.add('Test');
             values.add('Data');
-            sheets.spreadsheets().values().batchSetDataValidation(
-                gForce.getServicesSpreadsheetId(), Integer.valueOf(sheetId), 8, 8, 8, 9, values)
-                .execute();
+
+            if (!Test.isRunningTest()) {
+                sheets.spreadsheets().values().batchSetDataValidation(
+                    gForce.getServicesSpreadsheetId(), Integer.valueOf(sheetId), 8, 8, 8, 9, values)
+                    .execute();
+            }
     
             gForce.updateToken();
         }
@@ -88,6 +94,10 @@ public with sharing class AccountTriggerController {
 
     public static void updateCellValues(GoogleSheets sheets, GoogleForce gForce, String sheetTitle, String cellRangeAddress, String cellValue) {
         String cellRange = '\'' + EncodingUtil.urlEncode(sheetTitle, 'UTF-8') + '\'!' + cellRangeAddress;
+
+        if (Test.isRunningTest()) {
+            return;
+        }
 
         GoogleSheets.ValueRange valueRange = new GoogleSheets.ValueRange()
             .setMajorDimension('ROWS')
