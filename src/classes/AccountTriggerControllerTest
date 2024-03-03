@@ -1,0 +1,30 @@
+@isTest(SeeAllData=true)
+public with sharing class AccountTriggerControllerTest {
+    static testMethod void processServicesTest() {
+        Account[] myAccounts = [select Id, Services_Spreadsheet_Sheet_Id__c from Account limit 100];
+        Contact[] myContacts = [select Id from Contact limit 10];
+        List<Service_c__c> myServices = new List<Service_c__c>();
+        Product2 myProduct = new Product2();
+        myProduct.Product_Type__c = 'License';
+        myProduct.Name = 'myProduct';
+        insert myProduct;
+        Integer i = 1;
+        for (Account myAccount : myAccounts) {
+            myAccount.Services_Spreadsheet_Sheet_id__c = String.valueOf(i++);
+            myAccount.Trainer_1__c = myContacts.get(0).Id;
+            myAccount.Trainer_2__c = myContacts.get(1).Id;
+            myAccount.Trainer_3__c = myContacts.get(2).Id;
+            Service_c__c myService = new Service_c__c();
+            myService.Expired__c = false;
+            myService.Account__c = myAccount.Id;
+            myService.Product__c = myProduct.Id;
+            myService.Sale_date__c = System.today();
+            myServices.add(myService);
+        }
+        insert myServices;
+        update myAccounts;
+        Test.startTest();
+        AccountTriggerController.processAccounts(myAccounts);
+        Test.stopTest();        
+    }
+}
