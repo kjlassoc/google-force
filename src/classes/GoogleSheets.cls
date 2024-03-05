@@ -3,6 +3,9 @@ public class GoogleSheets {
     private static final String rootUrl = 'https://sheets.googleapis.com/v4/spreadsheets';
     private GoogleForce gForce;
 
+    public GoogleSheets() {
+    }
+
     public GoogleSheets(GoogleForce gForce) {
         this.gForce = gForce;
     }
@@ -145,6 +148,9 @@ public class GoogleSheets {
         private List<String> dataValues;
         private BatchSetDataRequest batchSetDataRequest;
 
+        public BatchSetDataValidation() {
+        }
+
         public BatchSetDataValidation(Values gValues, String spreadsheetId, Integer sheetId, Integer startRowIndex, Integer endRowIndex, Integer startColumnIndex, Integer endColumnIndex, List<String> dataValues) {
             this.gValues = gValues;
             this.spreadsheetId = spreadsheetId;
@@ -213,6 +219,9 @@ System.debug('----->' + JSON.serializePretty(batchSetDataRequest));
         private Integer sheetId;
         private String title;
         private BatchUpdateSheetRequest batchUpdateSheetRequest;
+
+        public BatchUpdateSheetProperty() {
+        }
 
         public BatchUpdateSheetProperty(Values gValues, String spreadsheetId, Integer sheetId, String title) {
             this.gValues = gValues;
@@ -391,6 +400,9 @@ System.debug('----->' + JSON.serializePretty(batchSetDataRequest));
     public class Get {
         private Values gValues;
         private String spreadsheetId;
+
+        public Get() {
+        }
 
         public Get(Values gValues, String spreadsheetId) {
             this.gValues = gValues;
