@@ -4,9 +4,11 @@ private class GoogleSheets_Test {
     private static GoogleForce gForce;
     private static GoogleSheets sheets;
     private static String spreadsheetId = 'testSpreadsheetId';
+    private static Integer sheetId = 1;
 
     static {
         gForce = new GoogleForce('unitTestAcct');
+        sheets = new GoogleSheets();
         sheets = new GoogleSheets(gForce);
     }
 
@@ -35,6 +37,8 @@ private class GoogleSheets_Test {
             spreadsheetId)
             .setRanges(new List<String>{ 'A1:E1' })
             .setMajorDimension('ROWS')
+            .setDateTimeRenderOption('12345')
+            .setValueRenderOption('true')
             .execute();
 
         Test.stopTest();
@@ -44,6 +48,36 @@ private class GoogleSheets_Test {
 
         System.assertEquals(batchGetValsRespMock.getValueRanges().get(0).getValues(),
             batchGetResp.getValueRanges().get(0).getValues());
+    }
+
+    @isTest static void batchUpdateSheetProperty() {
+        GoogleSheets.BatchUpdateSheetProperty batchUpdateSheetPropertyRespMock =
+            new GoogleSheets.BatchUpdateSheetProperty();
+
+        Test.setMock(HttpCalloutMock.class, new GoogleMockResponse(200,
+            'OK', JSON.serialize(batchUpdateSheetPropertyRespMock, true), null));
+
+        sheets.spreadsheets().values().batchUpdateSheetProperty(
+            gForce.getServicesSpreadsheetId(), sheetId, 'TestAccount')
+            .execute();
+    }
+
+    @isTest static void batchSetDataValidation() {
+        GoogleSheets.BatchSetDataValidation batchSetDataValidationRespMock =
+            new GoogleSheets.BatchSetDataValidation();
+
+        Test.setMock(HttpCalloutMock.class, new GoogleMockResponse(200,
+            'OK', JSON.serialize(batchSetDataValidationRespMock, true), null));
+
+        List<String> values = new List<String>();
+            values.add('This');
+            values.add('Is');
+            values.add('Test');
+            values.add('Data');
+
+        sheets.spreadsheets().values().batchSetDataValidation(
+            gForce.getServicesSpreadsheetId(), sheetId, 8, 8, 8, 9, values)
+            .execute();
     }
 
     @isTest static void batchUpdate() {
@@ -94,6 +128,8 @@ private class GoogleSheets_Test {
         GoogleSheets.BatchUpdateRequest body = new GoogleSheets.BatchUpdateRequest()
             .setIncludeValuesInResponse(true)
             .setValueInputOption('USER_ENTERED')
+            .setResponseDateTimeRenderOption('12345')
+            .setResponseValueRenderOption('true')
             .setData(data);
 
         GoogleSheets.BatchUpdateValuesResponse batchValsResp = sheets.spreadsheets().values()
@@ -105,6 +141,13 @@ private class GoogleSheets_Test {
             batchUpdateValsRespMock.getResponses().get(0).getUpdatedData().getValues().get(0).get(1),
             batchValsResp.getResponses().get(0).getUpdatedData().getValues().get(0).get(1));
 
+        System.assertEquals(
+            batchUpdateValsRespMock.getSpreadsheetId(),
+            batchValsResp.getSpreadsheetId());
+
+        System.assertEquals(
+            batchUpdateValsRespMock.getTotalUpdatedCells(),
+            batchValsResp.getTotalUpdatedCells());
     }
 
     @isTest static void getRange() {
@@ -165,11 +208,17 @@ private class GoogleSheets_Test {
             '1OG3iEFN-prmiIS7Fqhd078WUyid_9Na97lroinaHu3I', 'A1:B2', valueRange)
             .setIncludeValuesInResponse(true)
             .setValueInputOption('USER_ENTERED')
+            .setResponseDateTimeRenderOption('12345')
+            .setResponseValueRenderOption('true')
             .execute();
 
         GoogleSheets.ValueRange valsGetRangeResp = sheets.spreadsheets().values().getRange(
             '1OG3iEFN-prmiIS7Fqhd078WUyid_9Na97lroinaHu3I', 'A1:B2')
             .execute();
+
+        GoogleSheets.Get valsGetResp = sheets.spreadsheets().values().get('1OG3iEFN-prmiIS7Fqhd078WUyid_9Na97lroinaHu3I');
+
+        GoogleSheets.Sheet valsCopyToResp = sheets.spreadsheets().values().copyTo('1OG3iEFN-prmiIS7Fqhd078WUyid_9Na97lroinaHu3I', '1OG3iEFN-prmiIS7Fqhd078WUyid_9Na97lroinaHu3J', 1).execute();
 
         Test.stopTest();
 
