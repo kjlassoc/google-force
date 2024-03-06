@@ -1,8 +1,10 @@
 public with sharing class AccountTriggerController {
     public static void processAccounts(Account[] accounts) {
-        for (Account account : accounts) {
-            if (String.isNotEmpty(account.Services_Spreadsheet_Sheet_Id__c)) {
-                updateSpreadsheet(account.Services_Spreadsheet_Sheet_Id__c, account.Id);
+        if (accounts != null) {
+            for (Account account : accounts) {
+                if (String.isNotEmpty(account.Services_Spreadsheet_Sheet_Id__c)) {
+                    updateSpreadsheet(account.Services_Spreadsheet_Sheet_Id__c, account.Id);
+                }
             }
         }
     }
