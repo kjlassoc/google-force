@@ -16,6 +16,7 @@
 		<members>ServiceTriggerTest</members>
 		<members>ServiceTriggerControllerTest</members>
 		<members>AccountTriggerControllerTest</members>
+		<members>AccountTriggerController_TGN_TEST</members>
 		<name>ApexClass</name>
 	</types>
 	<types>
