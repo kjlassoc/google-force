@@ -5,6 +5,7 @@
 		<members>GoogleSheetsBatch</members>
 		<members>ServiceTriggerController</members>
 		<members>GoogleForce</members>
+		<members>GoogleForce_TGN_TEST</members>
 		<members>GoogleMockResponse</members>
 		<members>GoogleDrive</members>
 		<members>GoogleDrive_Test</members>
